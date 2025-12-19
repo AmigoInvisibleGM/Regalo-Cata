@@ -24,34 +24,28 @@ h1 {
 }
 
 .arrow {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-
   width: 0;
   height: 0;
-  pointer-events: none;
-
+  margin: 10px auto -5px auto;
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
   border-top: 36px solid #ff4d6d;
 }
 
-
 .container {
   position: relative;
   width: min(90vw, 380px);
   margin: 0 auto 10px auto;
+  touch-action: none;
 }
-
 
 canvas {
-  position: relative;
-  z-index: 1;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(255,255,255,0.3);
 }
-
 
 button {
   margin-top: 22px;
@@ -87,8 +81,8 @@ button:active {
 <h1>🎄 Ruleta del Amigo Invisible de Cata 🎄</h1>
 
 <div class="container">
-  <canvas id="wheel" width="380" height="380"></canvas>
   <div class="arrow"></div>
+  <canvas id="wheel" width="380" height="380"></canvas>
 </div>
 
 <button id="spinBtn" onclick="spin()">GIRAR 🎰</button>
@@ -208,9 +202,7 @@ function spin() {
   girando = true;
 
   document.getElementById("spinBtn").style.display = "none";
- 
-  startAngle = currentAngle;
-  
+
   const vueltas = 8;
   const indexGanador = premios.indexOf(premioGanador);
 
@@ -226,7 +218,7 @@ function spin() {
     const progress = Math.min((time - start) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
 
-    currentAngle = startAngle + ease * finalAngle;
+    currentAngle = currentAngle + (finalAngle - currentAngle) * ease;
     drawWheel();
 
     if (progress < 1) {
