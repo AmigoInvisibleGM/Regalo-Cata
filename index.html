@@ -203,8 +203,8 @@ function spin() {
 
   document.getElementById("spinBtn").style.display = "none";
 
-  const vueltas = 8;            // cantidad de vueltas
-  const duration = 8000;        // duración real del giro (ms)
+  const vueltas = 8;       // cuántas vueltas completas
+  const duration = 8000;   // duración real del giro (ms)
 
   const indexGanador = premios.indexOf(premioGanador);
 
@@ -213,29 +213,30 @@ function spin() {
     (indexGanador * angleStep) -
     (angleStep / 2);
 
-  // Corrige el ángulo actual (si la movieron a mano)
-  const ajuste = currentAngle % (2 * Math.PI);
+  // ángulo actual real (normalizado)
+  const startAngle = currentAngle % (2 * Math.PI);
 
-  const finalAngle =
+  // cuánto hay que girar DESDE donde está ahora
+  const deltaAngle =
     (vueltas * 2 * Math.PI) +
-    (targetAngle - ajuste);
+    (targetAngle - startAngle);
 
-  const start = performance.now();
+  const startTime = performance.now();
 
   function animate(time) {
-    const progress = Math.min((time - start) / duration, 1);
+    const progress = Math.min((time - startTime) / duration, 1);
 
     // easing suave tipo casino
     const ease = 1 - Math.pow(1 - progress, 3);
 
-    currentAngle = ease * finalAngle;
+    currentAngle = startAngle + ease * deltaAngle;
     drawWheel();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // fuerza posición final exacta
-      currentAngle = finalAngle;
+      // fijamos posición final exacta
+      currentAngle = startAngle + deltaAngle;
       drawWheel();
 
       document.getElementById("result").innerHTML =
