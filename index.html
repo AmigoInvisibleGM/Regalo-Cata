@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>🎁 Ruleta del amigo invisible de Grupo Madero</title>
+<title>🎁 Ruleta del Amigo Invisible de Cata</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -11,29 +13,30 @@ body {
   min-height: 100vh;
   background: radial-gradient(circle at top, #2b2b2b, #0e0e0e);
   color: white;
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-align: center;
 }
 
 h1 {
   margin-top: 20px;
   font-size: clamp(22px, 6vw, 34px);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .arrow {
   width: 0;
   height: 0;
-  margin: 12px auto 0 auto;
+  margin: 10px auto -5px auto;
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
-  border-bottom: 36px solid #ff4d6d;
+  border-top: 36px solid #ff4d6d;
 }
 
 .container {
   position: relative;
   width: min(90vw, 380px);
-  margin: 15px auto;
+  margin: 0 auto 10px auto;
+  touch-action: none;
 }
 
 canvas {
@@ -45,14 +48,15 @@ canvas {
 }
 
 button {
-  margin-top: 25px;
+  margin-top: 22px;
   padding: 16px 38px;
   font-size: clamp(16px, 4.5vw, 20px);
   border: none;
   border-radius: 40px;
   background: linear-gradient(135deg, #ffb347, #ffcc33);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
@@ -63,7 +67,7 @@ button:active {
 #result {
   margin-top: 22px;
   font-size: clamp(18px, 5vw, 24px);
-  font-weight: bold;
+  font-weight: 600;
 }
 
 #claim {
@@ -74,7 +78,7 @@ button:active {
 
 <body>
 
-<h1>🎄 Ruleta del Amigo Invisible de Grupo Madero 🎄</h1>
+<h1>🎄 Ruleta del Amigo Invisible de Cata 🎄</h1>
 
 <div class="arrow"></div>
 
@@ -90,16 +94,16 @@ button:active {
 
 <script>
 const premios = [
-  "Viaje a Japòn ✈️",
-  "Terreno en Vida Lagoon",
+  "Viaje a Japón ✈️",
+  "Un terrenito 🏡",
   "iPhone 17 Pro Max 📱",
   "Peugeot 308 GTI 🚗",
-  "1 año de combustible",
-  "u$d 5000 💵",
-  "💅 Esmaltado 💅"
+  "U$D 7.000 💵",
+  "2 años de nafta",
+  "Esmaltado 💅"
 ];
 
-const premioGanador = "💅 Esmaltado 💅";
+const premioGanador = "Esmaltado 💅";
 const imagenGiftcard = "Gift Card - Nails and Co - Cata Mirabet.jpeg";
 
 const canvas = document.getElementById("wheel");
@@ -122,6 +126,7 @@ const colors = [
 let currentAngle = 0;
 let girando = false;
 
+// ---------- DIBUJO ----------
 function drawWheel() {
   ctx.clearRect(0, 0, size, size);
 
@@ -144,7 +149,7 @@ function drawWheel() {
     ctx.rotate(startAngle + angleStep / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#000";
-    ctx.font = "bold 15px Segoe UI";
+    ctx.font = "600 15px Montserrat";
     ctx.fillText(premios[i], radius - 14, 6);
     ctx.restore();
   }
@@ -152,6 +157,47 @@ function drawWheel() {
 
 drawWheel();
 
+// ---------- ARRASTRE ----------
+let dragging = false;
+let startAngleDrag = 0;
+
+function getAngleFromEvent(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - rect.width / 2;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - rect.height / 2;
+  return Math.atan2(y, x);
+}
+
+canvas.addEventListener("mousedown", e => {
+  if (girando) return;
+  dragging = true;
+  startAngleDrag = getAngleFromEvent(e) - currentAngle;
+});
+
+canvas.addEventListener("mousemove", e => {
+  if (!dragging || girando) return;
+  currentAngle = getAngleFromEvent(e) - startAngleDrag;
+  drawWheel();
+});
+
+canvas.addEventListener("mouseup", () => dragging = false);
+canvas.addEventListener("mouseleave", () => dragging = false);
+
+canvas.addEventListener("touchstart", e => {
+  if (girando) return;
+  dragging = true;
+  startAngleDrag = getAngleFromEvent(e) - currentAngle;
+});
+
+canvas.addEventListener("touchmove", e => {
+  if (!dragging || girando) return;
+  currentAngle = getAngleFromEvent(e) - startAngleDrag;
+  drawWheel();
+});
+
+canvas.addEventListener("touchend", () => dragging = false);
+
+// ---------- GIRO FIJO ----------
 function spin() {
   if (girando) return;
   girando = true;
@@ -173,14 +219,14 @@ function spin() {
     const progress = Math.min((time - start) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
 
-    currentAngle = ease * finalAngle;
+    currentAngle = currentAngle + (finalAngle - currentAngle) * ease;
     drawWheel();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
       document.getElementById("result").innerHTML =
-        `🎉 ¡Felicitaciones!<br>Ganaste un <b>Esmaltado</b> 💅`;
+        `🎉 ¡Felicitaciones Cata!<br>Ganaste un <b>Esmaltado de uñas</b> 💅`;
 
       document.getElementById("claim").style.display = "inline-block";
     }
