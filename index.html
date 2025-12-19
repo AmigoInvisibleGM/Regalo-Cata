@@ -203,29 +203,43 @@ function spin() {
 
   document.getElementById("spinBtn").style.display = "none";
 
-  const vueltas = 8;
+  const vueltas = 8;            // cantidad de vueltas
+  const duration = 8000;        // duración real del giro (ms)
+
   const indexGanador = premios.indexOf(premioGanador);
 
   const targetAngle =
-    (Math.PI * 3 / 2) - (indexGanador * angleStep) - (angleStep / 2);
+    (Math.PI * 3 / 2) -
+    (indexGanador * angleStep) -
+    (angleStep / 2);
 
-  const finalAngle = (vueltas * 2 * Math.PI) + targetAngle;
+  // Corrige el ángulo actual (si la movieron a mano)
+  const ajuste = currentAngle % (2 * Math.PI);
 
-  const duration = 8000;
+  const finalAngle =
+    (vueltas * 2 * Math.PI) +
+    (targetAngle - ajuste);
+
   const start = performance.now();
 
   function animate(time) {
     const progress = Math.min((time - start) / duration, 1);
+
+    // easing suave tipo casino
     const ease = 1 - Math.pow(1 - progress, 3);
 
-    currentAngle = currentAngle + (finalAngle - currentAngle) * ease;
+    currentAngle = ease * finalAngle;
     drawWheel();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
+      // fuerza posición final exacta
+      currentAngle = finalAngle;
+      drawWheel();
+
       document.getElementById("result").innerHTML =
-        `🎉 ¡Felicitaciones Cata!<br>Ganaste un <b>Esmaltado de uñas</b> 💅`;
+        `🎉 ¡Felicitaciones Cata!<br>Ganaste un <b>Esmaltado</b> 💅`;
 
       document.getElementById("claim").style.display = "inline-block";
     }
@@ -233,6 +247,7 @@ function spin() {
 
   requestAnimationFrame(animate);
 }
+
 
 function reclamar() {
   window.location.href = imagenGiftcard;
