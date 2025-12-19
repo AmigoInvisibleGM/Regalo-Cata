@@ -3,46 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <title>🎁 Ruleta del Amigo Invisible</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
+  margin: 0;
   background: #111;
   color: white;
+  font-family: Arial, sans-serif;
   text-align: center;
-  margin-top: 40px;
 }
 
-#wheel {
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 10px solid #fff;
-  margin: 30px auto;
+h1 {
+  margin-top: 20px;
+}
+
+.container {
   position: relative;
-  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  width: 320px;
+  margin: 30px auto;
 }
 
-#arrow {
+canvas {
+  border-radius: 50%;
+  background: #222;
+}
+
+.arrow {
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-bottom: 30px solid red;
-  margin: auto;
+  margin: 0 auto 10px auto;
 }
 
 button {
+  margin-top: 20px;
   padding: 15px 30px;
   font-size: 18px;
-  cursor: pointer;
-  border-radius: 8px;
   border: none;
+  border-radius: 8px;
   background: gold;
+  cursor: pointer;
   font-weight: bold;
 }
 
 #result {
-  margin-top: 30px;
+  margin-top: 25px;
   font-size: 22px;
   font-weight: bold;
 }
@@ -52,8 +59,12 @@ button {
 <body>
 
 <h1>🎄 Ruleta del Amigo Invisible 🎄</h1>
-<div id="arrow"></div>
-<div id="wheel"></div>
+
+<div class="arrow"></div>
+
+<div class="container">
+  <canvas id="wheel" width="320" height="320"></canvas>
+</div>
 
 <button onclick="spin()">GIRAR 🎰</button>
 
@@ -64,43 +75,92 @@ const premios = [
   "Viaje a Japón ✈️",
   "PlayStation 5 🎮",
   "iPhone 15 📱",
-  "Un auto 0km 🚗",
-  "Fin de semana en la playa 🏖️",
+  "Auto 0km 🚗",
   "Cena gourmet 🍽️",
-  "🎁 TU REGALO 🎁"
+  "Fin de semana 🏖️",
+  "🎁 MEDIAS 🎁"
 ];
 
-// ESTE ES EL PREMIO QUE SIEMPRE SALE
-const premioGanador = "🎁 TU REGALO 🎁";
+// 🎯 ESTE ES EL PREMIO QUE SIEMPRE SALE
+const premioGanador = "🎁 MEDIAS 🎁";
 
-// Dibujo visual de la ruleta (solo estética)
-const wheel = document.getElementById("wheel");
-const colors = ["#f44336","#2196f3","#4caf50","#ff9800","#9c27b0","#03a9f4","#ffc107"];
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const size = canvas.width;
+const center = size / 2;
+const radius = center;
+const angleStep = (2 * Math.PI) / premios.length;
 
-let gradient = "conic-gradient(";
-for (let i = 0; i < premios.length; i++) {
-  gradient += `${colors[i]} ${i * (360 / premios.length)}deg ${(i+1) * (360 / premios.length)}deg,`;
+const colors = [
+  "#f44336",
+  "#2196f3",
+  "#4caf50",
+  "#ff9800",
+  "#9c27b0",
+  "#03a9f4",
+  "#ffc107"
+];
+
+let currentAngle = 0;
+
+function drawWheel() {
+  ctx.clearRect(0, 0, size, size);
+
+  for (let i = 0; i < premios.length; i++) {
+    const startAngle = currentAngle + i * angleStep;
+    const endAngle = startAngle + angleStep;
+
+    ctx.beginPath();
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius, startAngle, endAngle);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // TEXTO
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(startAngle + angleStep / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#000";
+    ctx.font = "bold 14px Arial";
+    ctx.fillText(premios[i], radius - 10, 5);
+    ctx.restore();
+  }
 }
-wheel.style.background = gradient.slice(0, -1);
+
+drawWheel();
 
 function spin() {
-  const vueltas = 5;
-  const anguloPorPremio = 360 / premios.length;
-
-  // Buscamos el índice del premio ganador
+  const vueltas = 6;
   const indexGanador = premios.indexOf(premioGanador);
 
-  // Calculamos el ángulo exacto
-  const anguloFinal =
-    (vueltas * 360) +
-    (360 - (indexGanador * anguloPorPremio) - anguloPorPremio / 2);
+  const targetAngle =
+    (Math.PI * 3 / 2) - (indexGanador * angleStep) - (angleStep / 2);
 
-  wheel.style.transform = `rotate(${anguloFinal}deg)`;
+  const finalAngle = (vueltas * 2 * Math.PI) + targetAngle;
 
-  setTimeout(() => {
-    document.getElementById("result").innerHTML =
-      `🎉 ¡Ganaste! <br><br>${premioGanador}`;
-  }, 4000);
+  const duration = 4000;
+  const start = performance.now();
+
+  function animate(time) {
+    const progress = Math.min((time - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+
+    currentAngle = ease * finalAngle;
+    drawWheel();
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      document.getElementById("result").innerHTML =
+        `🎉 ¡Ganaste!<br><br>${premioGanador}`;
+    }
+  }
+
+  requestAnimationFrame(animate);
 }
 </script>
 
