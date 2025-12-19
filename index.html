@@ -80,9 +80,8 @@ button:active {
 
 <h1>🎄 Ruleta del Amigo Invisible de Cata 🎄</h1>
 
-<div class="arrow"></div>
-
 <div class="container">
+  <div class="arrow"></div>
   <canvas id="wheel" width="380" height="380"></canvas>
 </div>
 
@@ -96,7 +95,7 @@ button:active {
 const premios = [
   "Viaje a Japón ✈️",
   "Un terrenito 🏡",
-  "iPhone 17 Pro Max 📱",
+  "iPhone 17 Pro 📱",
   "Peugeot 308 GTI 🚗",
   "U$D 7.000 💵",
   "2 años de nafta",
@@ -204,7 +203,7 @@ function spin() {
 
   document.getElementById("spinBtn").style.display = "none";
 
-  const vueltas = 6;
+  const vueltas = 8;
   const indexGanador = premios.indexOf(premioGanador);
 
   const targetAngle =
@@ -212,7 +211,7 @@ function spin() {
 
   const finalAngle = (vueltas * 2 * Math.PI) + targetAngle;
 
-  const duration = 4200;
+  const duration = 7500;
   const start = performance.now();
 
   function animate(time) {
