@@ -7,45 +7,53 @@
 <style>
 body {
   margin: 0;
-  background: #111;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #2b2b2b, #0e0e0e);
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   text-align: center;
 }
 
 h1 {
-  margin-top: 20px;
-}
-
-.container {
-  position: relative;
-  width: 320px;
-  margin: 30px auto;
-}
-
-canvas {
-  border-radius: 50%;
-  background: #222;
+  margin-top: 25px;
+  font-weight: 600;
 }
 
 .arrow {
   width: 0;
   height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 30px solid red;
-  margin: 0 auto 10px auto;
+  margin: 15px auto 0 auto;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 32px solid #ff4d6d;
+}
+
+.container {
+  position: relative;
+  width: 340px;
+  margin: 20px auto;
+}
+
+canvas {
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(255,255,255,0.25);
 }
 
 button {
-  margin-top: 20px;
-  padding: 15px 30px;
+  margin-top: 25px;
+  padding: 16px 36px;
   font-size: 18px;
   border: none;
-  border-radius: 8px;
-  background: gold;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #ffb347, #ffcc33);
   cursor: pointer;
   font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+button:active {
+  transform: scale(0.96);
 }
 
 #result {
@@ -63,7 +71,7 @@ button {
 <div class="arrow"></div>
 
 <div class="container">
-  <canvas id="wheel" width="320" height="320"></canvas>
+  <canvas id="wheel" width="340" height="340"></canvas>
 </div>
 
 <button onclick="spin()">GIRAR 🎰</button>
@@ -72,17 +80,21 @@ button {
 
 <script>
 const premios = [
-  "Viaje a Japón ✈️",
-  "PlayStation 5 🎮",
-  "iPhone 15 📱",
-  "Auto 0km 🚗",
-  "Cena gourmet 🍽️",
-  "Fin de semana 🏖️",
-  "🎁 MEDIAS 🎁"
+  "Viaje ✈️",
+  "PS5 🎮",
+  "iPhone 📱",
+  "Auto 🚗",
+  "Spa 💆‍♀️",
+  "Cena 🍽️",
+  "💅 Gift Card 💅"
 ];
 
-// 🎯 ESTE ES EL PREMIO QUE SIEMPRE SALE
-const premioGanador = "🎁 MEDIAS 🎁";
+// 🎯 PREMIO FIJO
+const premioGanador = "💅 Gift Card 💅";
+
+// 👉 IMAGEN A LA QUE REDIRIGE
+const imagenGiftcard = "giftcard.png"; 
+// o URL completa si está afuera
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
@@ -92,16 +104,17 @@ const radius = center;
 const angleStep = (2 * Math.PI) / premios.length;
 
 const colors = [
-  "#f44336",
-  "#2196f3",
-  "#4caf50",
-  "#ff9800",
-  "#9c27b0",
-  "#03a9f4",
-  "#ffc107"
+  "#ff4d6d",
+  "#4dabf7",
+  "#51cf66",
+  "#ffd43b",
+  "#845ef7",
+  "#ff922b",
+  "#f06595"
 ];
 
 let currentAngle = 0;
+let girando = false;
 
 function drawWheel() {
   ctx.clearRect(0, 0, size, size);
@@ -115,18 +128,18 @@ function drawWheel() {
     ctx.arc(center, center, radius, startAngle, endAngle);
     ctx.fillStyle = colors[i];
     ctx.fill();
+
     ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.stroke();
 
-    // TEXTO
     ctx.save();
     ctx.translate(center, center);
     ctx.rotate(startAngle + angleStep / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#000";
-    ctx.font = "bold 14px Arial";
-    ctx.fillText(premios[i], radius - 10, 5);
+    ctx.font = "bold 15px Segoe UI";
+    ctx.fillText(premios[i], radius - 12, 6);
     ctx.restore();
   }
 }
@@ -134,6 +147,9 @@ function drawWheel() {
 drawWheel();
 
 function spin() {
+  if (girando) return;
+  girando = true;
+
   const vueltas = 6;
   const indexGanador = premios.indexOf(premioGanador);
 
@@ -142,7 +158,7 @@ function spin() {
 
   const finalAngle = (vueltas * 2 * Math.PI) + targetAngle;
 
-  const duration = 4000;
+  const duration = 4200;
   const start = performance.now();
 
   function animate(time) {
@@ -157,6 +173,10 @@ function spin() {
     } else {
       document.getElementById("result").innerHTML =
         `🎉 ¡Ganaste!<br><br>${premioGanador}`;
+
+      setTimeout(() => {
+        window.location.href = imagenGiftcard;
+      }, 2000);
     }
   }
 
