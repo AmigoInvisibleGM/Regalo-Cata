@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>🎁 Ruleta del Amigo Invisible</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
@@ -15,35 +16,38 @@ body {
 }
 
 h1 {
-  margin-top: 25px;
+  margin-top: 20px;
+  font-size: clamp(22px, 6vw, 34px);
   font-weight: 600;
 }
 
 .arrow {
   width: 0;
   height: 0;
-  margin: 15px auto 0 auto;
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-bottom: 32px solid #ff4d6d;
+  margin: 12px auto 0 auto;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 36px solid #ff4d6d;
 }
 
 .container {
   position: relative;
-  width: 340px;
-  margin: 20px auto;
+  width: min(90vw, 380px);
+  margin: 15px auto;
 }
 
 canvas {
+  width: 100%;
+  height: auto;
   background: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 25px rgba(255,255,255,0.25);
+  box-shadow: 0 0 30px rgba(255,255,255,0.3);
 }
 
 button {
   margin-top: 25px;
-  padding: 16px 36px;
-  font-size: 18px;
+  padding: 16px 38px;
+  font-size: clamp(16px, 4.5vw, 20px);
   border: none;
   border-radius: 40px;
   background: linear-gradient(135deg, #ffb347, #ffcc33);
@@ -57,9 +61,13 @@ button:active {
 }
 
 #result {
-  margin-top: 25px;
-  font-size: 22px;
+  margin-top: 22px;
+  font-size: clamp(18px, 5vw, 24px);
   font-weight: bold;
+}
+
+#claim {
+  display: none;
 }
 </style>
 </head>
@@ -71,12 +79,14 @@ button:active {
 <div class="arrow"></div>
 
 <div class="container">
-  <canvas id="wheel" width="340" height="340"></canvas>
+  <canvas id="wheel" width="380" height="380"></canvas>
 </div>
 
-<button onclick="spin()">GIRAR 🎰</button>
+<button id="spinBtn" onclick="spin()">GIRAR 🎰</button>
 
 <div id="result"></div>
+
+<button id="claim" onclick="reclamar()">🎁 Reclamá tu premio</button>
 
 <script>
 const premios = [
@@ -89,12 +99,8 @@ const premios = [
   "💅 Gift Card 💅"
 ];
 
-// 🎯 PREMIO FIJO
 const premioGanador = "💅 Gift Card 💅";
-
-// 👉 IMAGEN A LA QUE REDIRIGE
-const imagenGiftcard = "Gift Card - Nails and Co - Cata Mirabet.jpeg"; 
-// o URL completa si está afuera
+const imagenGiftcard = "giftcard.png";
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
@@ -139,7 +145,7 @@ function drawWheel() {
     ctx.textAlign = "right";
     ctx.fillStyle = "#000";
     ctx.font = "bold 15px Segoe UI";
-    ctx.fillText(premios[i], radius - 12, 6);
+    ctx.fillText(premios[i], radius - 14, 6);
     ctx.restore();
   }
 }
@@ -149,6 +155,8 @@ drawWheel();
 function spin() {
   if (girando) return;
   girando = true;
+
+  document.getElementById("spinBtn").style.display = "none";
 
   const vueltas = 6;
   const indexGanador = premios.indexOf(premioGanador);
@@ -172,15 +180,17 @@ function spin() {
       requestAnimationFrame(animate);
     } else {
       document.getElementById("result").innerHTML =
-        `🎉 ¡Ganaste!<br><br>${premioGanador}`;
+        `🎉 ¡Felicitaciones!<br>Ganaste una <b>Gift Card</b> 💅`;
 
-      setTimeout(() => {
-        window.location.href = imagenGiftcard;
-      }, 2000);
+      document.getElementById("claim").style.display = "inline-block";
     }
   }
 
   requestAnimationFrame(animate);
+}
+
+function reclamar() {
+  window.location.href = imagenGiftcard;
 }
 </script>
 
