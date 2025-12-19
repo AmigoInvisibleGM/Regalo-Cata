@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🎁 Ruleta del Amigo Invisible</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+}
+
+#wheel {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 10px solid #fff;
+  margin: 30px auto;
+  position: relative;
+  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+#arrow {
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 30px solid red;
+  margin: auto;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background: gold;
+  font-weight: bold;
+}
+
+#result {
+  margin-top: 30px;
+  font-size: 22px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎄 Ruleta del Amigo Invisible 🎄</h1>
+<div id="arrow"></div>
+<div id="wheel"></div>
+
+<button onclick="spin()">GIRAR 🎰</button>
+
+<div id="result"></div>
+
+<script>
+const premios = [
+  "Viaje a Japón ✈️",
+  "PlayStation 5 🎮",
+  "iPhone 15 📱",
+  "Un auto 0km 🚗",
+  "Fin de semana en la playa 🏖️",
+  "Cena gourmet 🍽️",
+  "🎁 TU REGALO 🎁"
+];
+
+// ESTE ES EL PREMIO QUE SIEMPRE SALE
+const premioGanador = "🎁 TU REGALO 🎁";
+
+// Dibujo visual de la ruleta (solo estética)
+const wheel = document.getElementById("wheel");
+const colors = ["#f44336","#2196f3","#4caf50","#ff9800","#9c27b0","#03a9f4","#ffc107"];
+
+let gradient = "conic-gradient(";
+for (let i = 0; i < premios.length; i++) {
+  gradient += `${colors[i]} ${i * (360 / premios.length)}deg ${(i+1) * (360 / premios.length)}deg,`;
+}
+wheel.style.background = gradient.slice(0, -1);
+
+function spin() {
+  const vueltas = 5;
+  const anguloPorPremio = 360 / premios.length;
+
+  // Buscamos el índice del premio ganador
+  const indexGanador = premios.indexOf(premioGanador);
+
+  // Calculamos el ángulo exacto
+  const anguloFinal =
+    (vueltas * 360) +
+    (360 - (indexGanador * anguloPorPremio) - anguloPorPremio / 2);
+
+  wheel.style.transform = `rotate(${anguloFinal}deg)`;
+
+  setTimeout(() => {
+    document.getElementById("result").innerHTML =
+      `🎉 ¡Ganaste! <br><br>${premioGanador}`;
+  }, 4000);
+}
+</script>
+
+</body>
+</html>
