@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>🎁 Ruleta del Amigo Invisible</title>
+<title>🎁 Ruleta del amigo invisible de Grupo Madero</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -74,7 +74,7 @@ button:active {
 
 <body>
 
-<h1>🎄 Ruleta del Amigo Invisible 🎄</h1>
+<h1>🎄 Ruleta del Amigo Invisible de Grupo Madero 🎄</h1>
 
 <div class="arrow"></div>
 
@@ -90,17 +90,17 @@ button:active {
 
 <script>
 const premios = [
-  "Viaje ✈️",
-  "PS5 🎮",
-  "iPhone 📱",
-  "Auto 🚗",
-  "Spa 💆‍♀️",
-  "Cena 🍽️",
-  "💅 Gift Card 💅"
+  "Viaje a Japòn ✈️",
+  "Terreno en Vida Lagoon",
+  "iPhone 17 Pro Max 📱",
+  "Peugeot 308 GTI 🚗",
+  "1 año de combustible",
+  "u$d 5000 💵",
+  "💅 Esmaltado 💅"
 ];
 
-const premioGanador = "💅 Gift Card 💅";
-const imagenGiftcard = "giftcard.png";
+const premioGanador = "💅 Esmaltado 💅";
+const imagenGiftcard = "Gift Card - Nails and Co - Cata Mirabet.jpeg";
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
@@ -180,7 +180,7 @@ function spin() {
       requestAnimationFrame(animate);
     } else {
       document.getElementById("result").innerHTML =
-        `🎉 ¡Felicitaciones!<br>Ganaste una <b>Gift Card</b> 💅`;
+        `🎉 ¡Felicitaciones!<br>Ganaste un <b>Esmaltado</b> 💅`;
 
       document.getElementById("claim").style.display = "inline-block";
     }
